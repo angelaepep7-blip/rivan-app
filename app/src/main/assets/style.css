@@ -172,3 +172,10 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   #pinInput { flex-basis: 100px; width: 100px; padding: 10px 7px; font-size: 14px; }
   .unlock-row #decryptBtn { padding: 10px 7px; font-size: 12px; }
 }
+
+body {
+  background: #000 !important;
+  background-image: url('https://i.imgur.com/ransomware_bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+}

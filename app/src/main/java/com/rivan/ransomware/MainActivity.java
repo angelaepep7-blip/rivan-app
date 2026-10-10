@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.view.WindowManager;
 import android.view.KeyEvent;
+import android.view.View;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -16,18 +17,25 @@ public class MainActivity extends Activity {
     private class AndroidBridge {
         @JavascriptInterface
         public void lockBack() {
-            runOnUiThread(() -> { backLocked = true; });
+            runOnUiThread(() -> {
+                backLocked = true;
+                startLockTask();
+            });
         }
 
         @JavascriptInterface
         public void unlockBack() {
-            runOnUiThread(() -> { backLocked = false; });
+            runOnUiThread(() -> {
+                backLocked = false;
+                try { stopLockTask(); } catch(Exception e) {}
+            });
         }
 
         @JavascriptInterface
         public void exitApp() {
             runOnUiThread(() -> {
                 backLocked = false;
+                try { stopLockTask(); } catch(Exception e) {}
                 webView.destroy();
                 finish();
                 System.exit(0);
@@ -43,6 +51,14 @@ public class MainActivity extends Activity {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        );
         webView = new WebView(this);
         setContentView(webView);
         WebSettings s = webView.getSettings();
@@ -51,40 +67,40 @@ public class MainActivity extends Activity {
         s.setAllowFileAccessFromFileURLs(true);
         s.setAllowUniversalAccessFromFileURLs(true);
         webView.addJavascriptInterface(new AndroidBridge(), "Android");
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                view.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                );
+            }
+        });
         webView.loadUrl("file:///android_asset/index.html");
     }
 
     @Override
     public void onBackPressed() {
-        if (backLocked) {
-            webView.evaluateJavascript("history.pushState(null,'',location.href);", null);
-            return;
-        }
+        if (backLocked) return;
         super.onBackPressed();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (backLocked && (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME)) {
-            return true;
-        }
+        if (backLocked) return true;
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (backLocked) {
-            android.app.ActivityManager am = (android.app.ActivityManager) getSystemService(ACTIVITY_SERVICE);
-            moveTaskToBack(false);
-        }
-    }
-
-    @Override
-    protected void onUserLeaveHint() {
-        if (backLocked) {
-            moveTaskToBack(false);
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            );
         }
     }
 }
