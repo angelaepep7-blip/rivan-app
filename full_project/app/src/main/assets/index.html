@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Ransomware mode!!</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Dialog konfirmasi awal -->
+<div id="welcomeDialog" class="welcome-overlay">
+  <div class="welcome-box">
+    <h2>Apakah Anda ingin membuka aplikasi ini?</h2>
+    <p>Tekan YES untuk melanjutkan.</p>
+    <div class="welcome-buttons">
+      <button id="yesBtn" type="button">YES</button>
+      <button id="noBtn" type="button">NO</button>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="mainApp" style="display: none;">
+  <img class="profile-photo" id="profilePhoto"
+    src="https://cdn.phototourl.com/member/2026-09-30-61293cda-25e8-4501-bbff-5c84737b777a.jpg"
+    alt="Foto profil">
+  <div class="warning">⚠ Ransomware mode! ⚠</div>
+  <h1>YOUR FILES ARE "ENCRYPTED"</h1>
+  <p class="subtitle">LOOCKED BY RIVAN GANTENG</p>
+  <div class="timer" id="timer">00:10:00</div>
+  <div class="progress-box">
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
+    <p id="status">Initializing...</p>
+  </div>
+  <div class="files" id="files"></div>
+  <div class="unlock-row">
+    <input
+      id="pinInput"
+      type="password"
+      inputmode="numeric"
+      autocomplete="off"
+      maxlength="12"
+      placeholder="Masukkan PIN"
+      aria-label="Masukkan PIN"
+    >
+    <button id="decryptBtn" disabled>decrypt</button>
+  </div>
+  <div id="result"></div>
+</div>
+
+<div class="pin-overlay" id="pinOverlay" hidden>
+  <div class="pin-overlay-card" role="alertdialog" aria-modal="true" aria-labelledby="pinErrorText">
+    <p id="pinErrorText">PIN LU SALAH GOBLOKKK</p>
+    <button type="button" id="closePinOverlay">OKE</button>
+  </div>
+</div>
+
+<script src="run.js"></script>
+</body>
+</html>

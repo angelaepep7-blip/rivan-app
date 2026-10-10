@@ -1,0 +1,174 @@
+/* made by https://t.me/halilintardev */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #080808;
+  color: #ff3333;
+  font-family: monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── WELCOME DIALOG ─────────────────────────────────── */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.96);
+  z-index: 999999;
+  padding: 20px;
+}
+
+.welcome-box {
+  width: 100%;
+  max-width: 360px;
+  padding: 24px 20px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  text-align: center;
+  color: #eee;
+}
+
+.welcome-box h2 { font-size: 22px; line-height: 1.4; margin: 0 0 14px; }
+.welcome-box p  { font-size: 14px; margin-bottom: 24px; }
+
+.welcome-buttons { display: flex; gap: 12px; }
+.welcome-buttons button {
+  flex: 1; min-width: 0;
+  padding: 14px 8px;
+  border: none; color: white;
+  font-size: 16px; cursor: pointer;
+  border-radius: 6px;
+}
+#yesBtn { background: #198754; }
+#noBtn  { background: #dc2626; }
+
+/* ── MAIN APP ───────────────────────────────────────── */
+.container {
+  width: 90%; max-width: 850px;
+  text-align: center;
+  padding: 35px;
+  border: 2px solid #ff2222;
+  background: #101010;
+  box-shadow: 0 0 30px #ff000055;
+}
+
+.profile-photo {
+  display: block;
+  width: 104px; height: 104px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ff2222;
+  box-shadow: 0 0 18px #ff000055;
+}
+
+.warning { font-size: 18px; animation: blink 1s infinite; }
+
+h1 { font-size: clamp(28px,6vw,55px); margin: 25px 0 10px; }
+
+.subtitle { color: #aaa; }
+
+.timer { font-size: 42px; margin: 25px; color: white; }
+
+.progress-box { margin: 20px 0; }
+
+.progress-bar {
+  height: 25px;
+  background: #292929;
+  border: 1px solid #555;
+}
+
+#progress {
+  width: 0%; height: 100%;
+  background: #ff2222;
+  transition: width .2s;
+}
+
+#status { color: #ddd; }
+
+.files {
+  height: 180px; overflow: hidden;
+  text-align: left; padding: 15px;
+  background: #050505; border: 1px solid #333;
+  margin: 20px 0;
+}
+
+.file { margin: 7px 0; color: #ff5555; }
+
+button {
+  padding: 15px 30px; border: 0;
+  background: #333; color: white;
+  font-family: monospace; font-size: 16px;
+  cursor: pointer;
+}
+
+button:not(:disabled):hover { background: #198754; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+#result { margin-top: 20px; font-size: 20px; color: #55ff88; }
+
+@keyframes blink { 50% { opacity: .3; } }
+
+/* ── PIN INPUT ROW ──────────────────────────────────── */
+.unlock-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px; width: 100%;
+}
+
+#pinInput {
+  flex: 0 1 145px; min-width: 0; width: 145px;
+  padding: 12px 10px;
+  border: 1px solid #555;
+  background: #080808; color: white;
+  font: 16px monospace;
+}
+
+#pinInput:focus { outline: 2px solid #ff3333; outline-offset: 1px; }
+
+.unlock-row #decryptBtn {
+  flex: 1 1 auto; min-width: 0;
+  overflow-wrap: anywhere; padding: 12px 10px;
+}
+
+/* ── PIN ERROR OVERLAY ──────────────────────────────── */
+.pin-overlay[hidden] { display: none !important; }
+
+.pin-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(0,0,0,0.88);
+}
+
+.pin-overlay-card {
+  width: min(100%, 420px);
+  padding: 26px 20px; text-align: center;
+  background: #101010;
+  border: 2px solid #ff2222;
+  box-shadow: 0 0 30px #ff000055;
+}
+
+#pinErrorText {
+  margin: 0 0 20px;
+  color: #ff3333;
+  font: bold 22px monospace;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 440px) {
+  .container { width: 94%; padding: 20px 12px; }
+  .unlock-row { gap: 6px; }
+  #pinInput { flex-basis: 100px; width: 100px; padding: 10px 7px; font-size: 14px; }
+  .unlock-row #decryptBtn { padding: 10px 7px; font-size: 12px; }
+}
